@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OddsLab — калькулятор вероятностей ставок</title>
+  <meta name="description" content="Конвертер коэффициентов, расчёт маржи букмекера, ценности ставки (EV), экспрессов и критерия Келли.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            base:    '#1C1917',
+            surface: '#26211E',
+            muted:   '#2C2420',
+            line:    'rgba(255,255,255,0.08)',
+            primary: '#EA580C',
+            primary2:'#F97316',
+            accent:  '#3B82F6',
+            danger:  '#EF4444',
+            success: '#22C55E',
+            ink:     '#FAFAF9',
+            sub:     '#A8A29E',
+          },
+          fontFamily: {
+            sans: ['"Fira Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"Fira Code"', 'ui-monospace', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-feature-settings: "tnum"; }
+    .num { font-family: "Fira Code", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type="number"] { -moz-appearance: textfield; }
+    .field {
+      width: 100%; height: 48px; padding: 0 14px;
+      background: #1C1917; color: #FAFAF9;
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 10px;
+      font-family: "Fira Code", ui-monospace, monospace; font-size: 16px;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    .field:focus { outline: none; border-color: #EA580C; box-shadow: 0 0 0 3px rgba(234,88,12,.25); }
+    .field[aria-invalid="true"] { border-color: #EF4444; box-shadow: 0 0 0 3px rgba(239,68,68,.18); }
+    .bar { transition: width .25s ease; }
+    [role="tab"] { transition: color .2s ease, background-color .2s ease; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-base text-ink font-sans antialiased">
+
+  <!-- Header -->
+  <header class="border-b border-line">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-5 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 13l3-3 4 4 5-7"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-lg sm:text-xl font-semibold leading-tight">OddsLab</h1>
+        <p class="text-sub text-sm leading-tight">Калькулятор вероятностей и ценности ставок</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+
+    <!-- Tabs -->
+    <nav aria-label="Калькуляторы">
+      <div role="tablist" aria-label="Выбор калькулятора"
+           class="flex gap-1 overflow-x-auto rounded-xl bg-surface border border-line p-1 mb-6">
+        <button role="tab" id="tab-convert" aria-controls="panel-convert" aria-selected="true"  data-tab="convert" class="tab-btn">Конвертер</button>
+        <button role="tab" id="tab-margin"  aria-controls="panel-margin"  aria-selected="false" data-tab="margin"  class="tab-btn">Маржа</button>
+        <button role="tab" id="tab-value"   aria-controls="panel-value"   aria-selected="false" data-tab="value"   class="tab-btn">Ценность (EV)</button>
+        <button role="tab" id="tab-parlay"  aria-controls="panel-parlay"  aria-selected="false" data-tab="parlay"  class="tab-btn">Экспресс</button>
+        <button role="tab" id="tab-kelly"   aria-controls="panel-kelly"   aria-selected="false" data-tab="kelly"   class="tab-btn">Келли</button>
+      </div>
+    </nav>
+
+    <!-- ===================== 1. Конвертер коэффициентов ===================== -->
+    <section role="tabpanel" id="panel-convert" aria-labelledby="tab-convert" tabindex="0">
+      <div class="grid lg:grid-cols-5 gap-5">
+        <div class="lg:col-span-3 card">
+          <h2 class="card-title">Конвертер коэффициентов</h2>
+          <p class="text-sub text-sm mb-5">Введите коэффициент в любом формате — остальные пересчитаются автоматически.</p>
+          <div class="grid sm:grid-cols-3 gap-4">
+            <div>
+              <label for="cv-decimal" class="lbl">Десятичный</label>
+              <input id="cv-decimal" class="field" type="number" inputmode="decimal" step="0.01" min="1.01" value="2.50" autocomplete="off">
+              <p class="hint">Например: 2.50</p>
+            </div>
+            <div>
+              <label for="cv-fractional" class="lbl">Дробный</label>
+              <input id="cv-fractional" class="field" type="text" inputmode="numeric" value="3/2" autocomplete="off">
+              <p class="hint">Например: 3/2</p>
+            </div>
+            <div>
+              <label for="cv-american" class="lbl">Американский</label>
+              <input id="cv-american" class="field" type="number" inputmode="numeric" step="1" value="150" autocomplete="off">
+              <p class="hint">Например: +150 или -200</p>
+            </div>
+          </div>
+          <p id="cv-error" class="text-danger text-sm mt-3 min-h-[1.25rem]" role="alert"></p>
+        </div>
+        <div class="lg:col-span-2 card" aria-live="polite">
+          <h2 class="card-title">Подразумеваемая вероятность</h2>
+          <p class="num text-5xl font-semibold text-primary2 mt-2 mb-3" id="cv-prob">40.00%</p>
+          <div class="h-3 rounded-full bg-muted overflow-hidden mb-5" aria-hidden="true">
+            <div id="cv-prob-bar" class="bar h-full rounded-full bg-gradient-to-r from-primary to-primary2" style="width:40%"></div>
+          </div>
+          <dl class="space-y-2 text-sm">
+            <div class="flex justify-between gap-4"><dt class="text-sub">Выплата со 100 ₽</dt><dd class="num" id="cv-payout">250.00 ₽</dd></div>
+            <div class="flex justify-between gap-4"><dt class="text-sub">Чистая прибыль со 100 ₽</dt><dd class="num" id="cv-profit">150.00 ₽</dd></div>
+            <div class="flex justify-between gap-4"><dt class="text-sub">Безубыточная вероятность</dt><dd class="num" id="cv-breakeven">40.00%</dd></div>
+          </dl>
+          <p class="text-sub text-xs mt-5">Подразумеваемая вероятность = 1 / десятичный коэффициент. Она включает маржу букмекера, поэтому реальная вероятность обычно ниже.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 2. Маржа букмекера ===================== -->
+    <section role="tabpanel" id="panel-margin" aria-labelledby="tab-margin" tabindex="0" hidden>
+      <div class="grid lg:grid-cols-5 gap-5">
+        <div class="lg:col-span-2 card">
+          <h2 class="card-title">Маржа букмекера</h2>
+          <p class="text-sub text-sm mb-5">Введите коэффициенты всех исходов рынка, чтобы узнать маржу и истинные вероятности без неё.</p>
+          <div id="mg-list" class="space-y-3"></div>
+          <div class="flex gap-2 mt-4">
+            <button type="button" id="mg-add" class="btn-secondary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+              Добавить исход
+            </button>
+          </div>
+          <p id="mg-error" class="text-danger text-sm mt-3 min-h-[1.25rem]" role="alert"></p>
+        </div>
+        <div class="lg:col-span-3 card" aria-live="polite">
+          <h2 class="card-title">Результат</h2>
+          <div class="flex flex-wrap items-baseline gap-x-6 gap-y-2 mt-2 mb-5">
+            <div>
+              <p class="text-sub text-sm">Маржа букмекера</p>
+              <p class="num text-4xl font-semibold text-primary2" id="mg-margin">4.71%</p>
+            </div>
+            <div>
+              <p class="text-sub text-sm">Сумма вероятностей</p>
+              <p class="num text-2xl" id="mg-overround">104.71%</p>
+            </div>
+          </div>
+          <div id="mg-results" class="space-y-3"></div>
+          <p class="text-sub text-xs mt-5">Истинная вероятность = подразумеваемая вероятность исхода ÷ сумма вероятностей всех исходов. Справедливый коэффициент = 1 ÷ истинная вероятность.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 3. Ценность ставки (EV) ===================== -->
+    <section role="tabpanel" id="panel-value" aria-labelledby="tab-value" tabindex="0" hidden>
+      <div class="grid lg:grid-cols-5 gap-5">
+        <div class="lg:col-span-2 card">
+          <h2 class="card-title">Ценность ставки (EV)</h2>
+          <p class="text-sub text-sm mb-5">Сравните вашу оценку вероятности с коэффициентом букмекера, чтобы понять, выгодна ли ставка на дистанции.</p>
+          <div class="space-y-4">
+            <div>
+              <label for="ev-odds" class="lbl">Коэффициент (десятичный)</label>
+              <input id="ev-odds" class="field" type="number" inputmode="decimal" step="0.01" min="1.01" value="2.10" autocomplete="off">
+            </div>
+            <div>
+              <label for="ev-prob" class="lbl">Ваша оценка вероятности, %</label>
+              <input id="ev-prob" class="field" type="number" inputmode="decimal" step="0.1" min="0.1" max="99.9" value="52" autocomplete="off">
+              <p class="hint">Насколько вероятен исход по вашему анализу</p>
+            </div>
+            <div>
+              <label for="ev-stake" class="lbl">Сумма ставки, ₽</label>
+              <input id="ev-stake" class="field" type="number" inputmode="decimal" step="10" min="0" value="1000" autocomplete="off">
+            </div>
+          </div>
+          <p id="ev-error" class="text-danger text-sm mt-3 min-h-[1.25rem]" role="alert"></p>
+        </div>
+        <div class="lg:col-span-3 card" aria-live="polite">
+          <h2 class="card-title">Результат</h2>
+          <div id="ev-verdict" class="rounded-xl border px-4 py-3 mt-2 mb-5 flex items-center gap-3 border-success/40 bg-success/10">
+            <svg id="ev-verdict-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-success shrink-0" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+            <p id="ev-verdict-text" class="font-medium text-success">Ценная ставка: ваша оценка выше вероятности, заложенной в коэффициент.</p>
+          </div>
+          <dl class="grid sm:grid-cols-2 gap-4">
+            <div class="stat"><dt class="text-sub text-sm">Ценность (value)</dt><dd class="num text-3xl font-semibold" id="ev-value">+9.20%</dd></div>
+            <div class="stat"><dt class="text-sub text-sm">Ожидаемая прибыль (EV)</dt><dd class="num text-3xl font-semibold" id="ev-ev">+92.00 ₽</dd></div>
+            <div class="stat"><dt class="text-sub text-sm">Вероятность в коэффициенте</dt><dd class="num text-2xl" id="ev-implied">47.62%</dd></div>
+            <div class="stat"><dt class="text-sub text-sm">Минимальный ценный коэффициент</dt><dd class="num text-2xl" id="ev-fair">1.92</dd></div>
+          </dl>
+          <p class="text-sub text-xs mt-5">EV = (вероятность × прибыль) − (1 − вероятность) × ставка. Положительный EV означает выгоду на длинной дистанции, но не гарантирует выигрыш конкретной ставки.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 4. Экспресс ===================== -->
+    <section role="tabpanel" id="panel-parlay" aria-labelledby="tab-parlay" tabindex="0" hidden>
+      <div class="grid lg:grid-cols-5 gap-5">
+        <div class="lg:col-span-2 card">
+          <h2 class="card-title">Экспресс (парлей)</h2>
+          <p class="text-sub text-sm mb-5">Добавьте события экспресса — узнаете общий коэффициент, выплату и вероятность прохода.</p>
+          <div id="pl-list" class="space-y-3"></div>
+          <button type="button" id="pl-add" class="btn-secondary mt-4">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            Добавить событие
+          </button>
+          <div class="mt-4">
+            <label for="pl-stake" class="lbl">Сумма ставки, ₽</label>
+            <input id="pl-stake" class="field" type="number" inputmode="decimal" step="10" min="0" value="500" autocomplete="off">
+          </div>
+          <p id="pl-error" class="text-danger text-sm mt-3 min-h-[1.25rem]" role="alert"></p>
+        </div>
+        <div class="lg:col-span-3 card" aria-live="polite">
+          <h2 class="card-title">Результат</h2>
+          <div class="flex flex-wrap items-baseline gap-x-6 gap-y-2 mt-2 mb-4">
+            <div>
+              <p class="text-sub text-sm">Общий коэффициент</p>
+              <p class="num text-4xl font-semibold text-primary2" id="pl-odds">3.94</p>
+            </div>
+            <div>
+              <p class="text-sub text-sm">Вероятность прохода</p>
+              <p class="num text-2xl" id="pl-prob">25.40%</p>
+            </div>
+          </div>
+          <div class="h-3 rounded-full bg-muted overflow-hidden mb-5" aria-hidden="true">
+            <div id="pl-prob-bar" class="bar h-full rounded-full bg-gradient-to-r from-primary to-primary2" style="width:25%"></div>
+          </div>
+          <dl class="grid sm:grid-cols-2 gap-4">
+            <div class="stat"><dt class="text-sub text-sm">Потенциальная выплата</dt><dd class="num text-2xl" id="pl-payout">1 968.30 ₽</dd></div>
+            <div class="stat"><dt class="text-sub text-sm">Чистая прибыль</dt><dd class="num text-2xl" id="pl-profit">1 468.30 ₽</dd></div>
+          </dl>
+          <p class="text-sub text-xs mt-5">Вероятность прохода экспресса — произведение подразумеваемых вероятностей всех событий. С каждым добавленным событием она падает быстрее, чем растёт выплата, а маржа букмекера умножается.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 5. Критерий Келли ===================== -->
+    <section role="tabpanel" id="panel-kelly" aria-labelledby="tab-kelly" tabindex="0" hidden>
+      <div class="grid lg:grid-cols-5 gap-5">
+        <div class="lg:col-span-2 card">
+          <h2 class="card-title">Критерий Келли</h2>
+          <p class="text-sub text-sm mb-5">Оптимальный размер ставки относительно банка при положительной ценности.</p>
+          <div class="space-y-4">
+            <div>
+              <label for="kl-odds" class="lbl">Коэффициент (десятичный)</label>
+              <input id="kl-odds" class="field" type="number" inputmode="decimal" step="0.01" min="1.01" value="2.10" autocomplete="off">
+            </div>
+            <div>
+              <label for="kl-prob" class="lbl">Ваша оценка вероятности, %</label>
+              <input id="kl-prob" class="field" type="number" inputmode="decimal" step="0.1" min="0.1" max="99.9" value="52" autocomplete="off">
+            </div>
+            <div>
+              <label for="kl-bank" class="lbl">Банкролл, ₽</label>
+              <input id="kl-bank" class="field" type="number" inputmode="decimal" step="100" min="0" value="20000" autocomplete="off">
+            </div>
+            <div>
+              <label for="kl-fraction" class="lbl">Доля Келли</label>
+              <select id="kl-fraction" class="field cursor-pointer">
+                <option value="1">Полный Келли (агрессивно)</option>
+                <option value="0.5" selected>1/2 Келли (умеренно)</option>
+                <option value="0.25">1/4 Келли (консервативно)</option>
+              </select>
+              <p class="hint">Дробный Келли снижает риск при ошибке в оценке вероятности</p>
+            </div>
+          </div>
+          <p id="kl-error" class="text-danger text-sm mt-3 min-h-[1.25rem]" role="alert"></p>
+        </div>
+        <div class="lg:col-span-3 card" aria-live="polite">
+          <h2 class="card-title">Результат</h2>
+          <div id="kl-verdict" class="rounded-xl border px-4 py-3 mt-2 mb-5 flex items-center gap-3 border-success/40 bg-success/10">
+            <p id="kl-verdict-text" class="font-medium text-success">Ставка имеет положительную ценность — Келли рекомендует ставить.</p>
+          </div>
+          <dl class="grid sm:grid-cols-2 gap-4">
+            <div class="stat"><dt class="text-sub text-sm">Рекомендуемая ставка</dt><dd class="num text-3xl font-semibold text-primary2" id="kl-stake">836 ₽</dd></div>
+            <div class="stat"><dt class="text-sub text-sm">Доля банкролла</dt><dd class="num text-3xl font-semibold" id="kl-percent">4.18%</dd></div>
+            <div class="stat"><dt class="text-sub text-sm">Полный Келли (f*)</dt><dd class="num text-2xl" id="kl-full">8.36%</dd></div>
+            <div class="stat"><dt class="text-sub text-sm">Ценность ставки</dt><dd class="num text-2xl" id="kl-edge">+9.20%</dd></div>
+          </dl>
+          <p class="text-sub text-xs mt-5">f* = (p × k − 1) / (k − 1), где p — ваша вероятность, k — десятичный коэффициент. Если f* ≤ 0, ценности нет и ставить не стоит.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Disclaimer -->
+    <footer class="mt-10 rounded-xl border border-line bg-surface px-4 sm:px-6 py-4 flex items-start gap-3">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A8A29E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 mt-0.5" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
+      </svg>
+      <p class="text-sub text-sm leading-relaxed">
+        OddsLab — аналитический инструмент. Расчёты основаны на теории вероятностей и не гарантируют выигрыш.
+        Ставки связаны с риском потери денег. 18+. Играйте ответственно.
+      </p>
+    </footer>
+  </main>
+
+  <script>
+  'use strict';
+
+  /* ---------- Утилиты ---------- */
+  const $ = (id) => document.getElementById(id);
+  const fmt = (n, digits = 2) =>
+    n.toLocaleString('ru-RU', { minimumFractionDigits: digits, maximumFractionDigits: digits });
+  const rub = (n, digits = 2) => fmt(n, digits) + ' ₽';
+  const pct = (n, digits = 2) => fmt(n, digits) + '%';
+  const clampBar = (p) => Math.max(0, Math.min(100, p));
+
+  function parseNum(el) {
+    const v = parseFloat(String(el.value).replace(',', '.'));
+    return Number.isFinite(v) ? v : NaN;
+  }
+
+  function setInvalid(el, invalid) {
+    el.setAttribute('aria-invalid', invalid ? 'true' : 'false');
+  }
+
+  /* Преобразования форматов коэффициентов */
+  const decToImplied = (d) => 100 / d;
+  const decToAmerican = (d) => d >= 2 ? Math.round((d - 1) * 100) : Math.round(-100 / (d - 1));
+  const americanToDec = (a) => a > 0 ? a / 100 + 1 : 100 / Math.abs(a) + 1;
+
+  function decToFractional(d) {
+    // Подбираем простую дробь, ближайшую к d-1
+    const target = d - 1;
+    let best = { num: 1, den: 1, err: Infinity };
+    for (let den = 1; den <= 100; den++) {
+      const num = Math.round(target * den);
+      if (num < 1) continue;
+      const err = Math.abs(target - num / den);
+      if (err < best.err - 1e-12) best = { num, den, err };
+      if (err < 1e-9) break;
+    }
+    const g = gcd(best.num, best.den);
+    return (best.num / g) + '/' + (best.den / g);
+  }
+  function gcd(a, b) { return b ? gcd(b, a % b) : a; }
+
+  function parseFractional(text) {
+    const m = String(text).trim().match(/^(\d+(?:[.,]\d+)?)\s*[\/:]\s*(\d+(?:[.,]\d+)?)$/);
+    if (!m) return NaN;
+    const num = parseFloat(m[1].replace(',', '.'));
+    const den = parseFloat(m[2].replace(',', '.'));
+    if (!den) return NaN;
+    return num / den + 1;
+  }
+
+  /* ---------- Вкладки ---------- */
+  const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+  function activateTab(tab) {
+    tabs.forEach((t) => {
+      const selected = t === tab;
+      t.setAttribute('aria-selected', selected);
+      $(t.getAttribute('aria-controls')).hidden = !selected;
+    });
+    tab.focus();
+  }
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => activateTab(tab));
+    tab.addEventListener('keydown', (e) => {
+      let next = null;
+      if (e.key === 'ArrowRight') next = tabs[(i + 1) % tabs.length];
+      if (e.key === 'ArrowLeft') next = tabs[(i - 1 + tabs.length) % tabs.length];
+      if (e.key === 'Home') next = tabs[0];
+      if (e.key === 'End') next = tabs[tabs.length - 1];
+      if (next) { e.preventDefault(); activateTab(next); }
+    });
+  });
+
+  /* ---------- 1. Конвертер ---------- */
+  const cvDecimal = $('cv-decimal'), cvFractional = $('cv-fractional'), cvAmerican = $('cv-american');
+
+  function renderConvert(d) {
+    const p = decToImplied(d);
+    $('cv-prob').textContent = pct(p);
+    $('cv-prob-bar').style.width = clampBar(p) + '%';
+    $('cv-payout').textContent = rub(100 * d);
+    $('cv-profit').textContent = rub(100 * (d - 1));
+    $('cv-breakeven').textContent = pct(p);
+    $('cv-error').textContent = '';
+  }
+
+  function convertFrom(source) {
+    let d = NaN;
+    if (source === 'decimal') d = parseNum(cvDecimal);
+    if (source === 'american') {
+      const a = parseNum(cvAmerican);
+      d = (Number.isFinite(a) && Math.abs(a) >= 100) ? americanToDec(a) : NaN;
+    }
+    if (source === 'fractional') d = parseFractional(cvFractional.value);
+
+    const valid = Number.isFinite(d) && d > 1;
+    setInvalid(cvDecimal, source === 'decimal' && !valid);
+    setInvalid(cvAmerican, source === 'american' && !valid);
+    setInvalid(cvFractional, source === 'fractional' && !valid);
+
+    if (!valid) {
+      $('cv-error').textContent = source === 'american'
+        ? 'Американский коэффициент должен быть от +100 или до −100.'
+        : 'Введите корректный коэффициент больше 1 (например 2.50 или 3/2).';
+      return;
+    }
+    if (source !== 'decimal') cvDecimal.value = d.toFixed(2);
+    if (source !== 'fractional') cvFractional.value = decToFractional(d);
+    if (source !== 'american') cvAmerican.value = decToAmerican(d);
+    renderConvert(d);
+  }
+
+  cvDecimal.addEventListener('input', () => convertFrom('decimal'));
+  cvFractional.addEventListener('input', () => convertFrom('fractional'));
+  cvAmerican.addEventListener('input', () => convertFrom('american'));
+
+  /* ---------- 2. Маржа ---------- */
+  const mgList = $('mg-list');
+  const MG_LABELS = ['Исход 1 (П1)', 'Исход 2 (X)', 'Исход 3 (П2)'];
+  let mgCounter = 0;
+
+  function mgRow(value) {
+    const id = 'mg-odd-' + (++mgCounter);
+    const row = document.createElement('div');
+    row.className = 'flex items-end gap-2';
+    row.innerHTML = `
+      <div class="flex-1">
+        <label for="${id}" class="lbl mg-label">Исход</label>
+        <input id="${id}" class="field mg-input" type="number" inputmode="decimal" step="0.01" min="1.01" value="${value}" autocomplete="off">
+      </div>
+      <button type="button" class="btn-icon mg-remove" aria-label="Удалить исход">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>`;
+    row.querySelector('.mg-input').addEventListener('input', renderMargin);
+    row.querySelector('.mg-remove').addEventListener('click', () => {
+      if (mgList.children.length <= 2) return;
+      row.remove();
+      relabelMargin();
+      renderMargin();
+    });
+    return row;
+  }
+
+  function relabelMargin() {
+    const rows = Array.from(mgList.children);
+    rows.forEach((row, i) => {
+      row.querySelector('.mg-label').textContent =
+        rows.length === 3 ? MG_LABELS[i] : 'Исход ' + (i + 1);
+    });
+    mgList.querySelectorAll('.mg-remove').forEach((btn) => {
+      btn.disabled = mgList.children.length <= 2;
+      btn.classList.toggle('opacity-40', btn.disabled);
+      btn.classList.toggle('cursor-not-allowed', btn.disabled);
+    });
+  }
+
+  $('mg-add').addEventListener('click', () => {
+    if (mgList.children.length >= 12) return;
+    mgList.appendChild(mgRow('3.00'));
+    relabelMargin();
+    renderMargin();
+  });
+
+  function renderMargin() {
+    const inputs = Array.from(mgList.querySelectorAll('.mg-input'));
+    const odds = inputs.map(parseNum);
+    let valid = true;
+    inputs.forEach((el, i) => {
+      const ok = Number.isFinite(odds[i]) && odds[i] > 1;
+      setInvalid(el, !ok);
+      if (!ok) valid = false;
+    });
+    if (!valid) {
+      $('mg-error').textContent = 'Все коэффициенты должны быть больше 1.';
+      return;
+    }
+    $('mg-error').textContent = '';
+
+    const implied = odds.map((d) => 1 / d);
+    const overround = implied.reduce((s, x) => s + x, 0);
+    $('mg-margin').textContent = pct((overround - 1) * 100);
+    $('mg-overround').textContent = pct(overround * 100);
+
+    const labels = Array.from(mgList.querySelectorAll('.mg-label')).map((l) => l.textContent);
+    $('mg-results').innerHTML = odds.map((d, i) => {
+      const trueP = implied[i] / overround * 100;
+      const fair = 100 / trueP;
+      return `
+        <div class="rounded-xl bg-muted/60 border border-line px-4 py-3">
+          <div class="flex flex-wrap justify-between gap-x-4 gap-y-1 text-sm mb-2">
+            <span class="font-medium">${labels[i]} <span class="num text-sub">@ ${fmt(d)}</span></span>
+            <span class="num">истинная: <span class="text-primary2 font-semibold">${pct(trueP)}</span> · честный кэф: <span class="font-semibold">${fmt(fair)}</span></span>
+          </div>
+          <div class="h-2 rounded-full bg-base overflow-hidden" aria-hidden="true">
+            <div class="bar h-full rounded-full bg-gradient-to-r from-primary to-primary2" style="width:${clampBar(trueP)}%"></div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  ['1.85', '3.60', '4.20'].forEach((v) => mgList.appendChild(mgRow(v)));
+  relabelMargin();
+
+  /* ---------- 3. Ценность (EV) ---------- */
+  function renderEV() {
+    const d = parseNum($('ev-odds'));
+    const p = parseNum($('ev-prob'));
+    const stake = parseNum($('ev-stake'));
+    const okD = Number.isFinite(d) && d > 1;
+    const okP = Number.isFinite(p) && p > 0 && p < 100;
+    const okS = Number.isFinite(stake) && stake >= 0;
+    setInvalid($('ev-odds'), !okD);
+    setInvalid($('ev-prob'), !okP);
+    setInvalid($('ev-stake'), !okS);
+    if (!okD || !okP || !okS) {
+      $('ev-error').textContent = 'Проверьте: коэффициент > 1, вероятность от 0 до 100, ставка ≥ 0.';
+      return;
+    }
+    $('ev-error').textContent = '';
+
+    const prob = p / 100;
+    const value = (prob * d - 1) * 100;           // value, %
+    const ev = stake * (prob * (d - 1) - (1 - prob)); // EV, ₽
+    const implied = decToImplied(d);
+    const fairOdds = 1 / prob;
+
+    $('ev-value').textContent = (value >= 0 ? '+' : '') + pct(value);
+    $('ev-ev').textContent = (ev >= 0 ? '+' : '') + rub(ev);
+    $('ev-implied').textContent = pct(implied);
+    $('ev-fair').textContent = fmt(fairOdds);
+
+    const good = value > 0;
+    const box = $('ev-verdict');
+    box.className = 'rounded-xl border px-4 py-3 mt-2 mb-5 flex items-center gap-3 ' +
+      (good ? 'border-success/40 bg-success/10' : 'border-danger/40 bg-danger/10');
+    $('ev-verdict-icon').setAttribute('class', (good ? 'text-success' : 'text-danger') + ' shrink-0');
+    $('ev-verdict-icon').innerHTML = good ? '<path d="M20 6 9 17l-5-5"/>' : '<path d="M18 6 6 18M6 6l12 12"/>';
+    const txt = $('ev-verdict-text');
+    txt.className = 'font-medium ' + (good ? 'text-success' : 'text-danger');
+    txt.textContent = good
+      ? 'Ценная ставка: ваша оценка выше вероятности, заложенной в коэффициент.'
+      : 'Ценности нет: коэффициент не покрывает вашу оценку вероятности.';
+    ['ev-value', 'ev-ev'].forEach((id) => {
+      $(id).classList.toggle('text-success', good);
+      $(id).classList.toggle('text-danger', !good);
+    });
+  }
+  ['ev-odds', 'ev-prob', 'ev-stake'].forEach((id) => $(id).addEventListener('input', renderEV));
+
+  /* ---------- 4. Экспресс ---------- */
+  const plList = $('pl-list');
+  let plCounter = 0;
+
+  function plRow(value) {
+    const id = 'pl-odd-' + (++plCounter);
+    const row = document.createElement('div');
+    row.className = 'flex items-end gap-2';
+    row.innerHTML = `
+      <div class="flex-1">
+        <label for="${id}" class="lbl pl-label">Событие</label>
+        <input id="${id}" class="field pl-input" type="number" inputmode="decimal" step="0.01" min="1.01" value="${value}" autocomplete="off">
+      </div>
+      <button type="button" class="btn-icon pl-remove" aria-label="Удалить событие">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>`;
+    row.querySelector('.pl-input').addEventListener('input', renderParlay);
+    row.querySelector('.pl-remove').addEventListener('click', () => {
+      if (plList.children.length <= 2) return;
+      row.remove();
+      relabelParlay();
+      renderParlay();
+    });
+    return row;
+  }
+
+  function relabelParlay() {
+    Array.from(plList.querySelectorAll('.pl-label')).forEach((l, i) => {
+      l.textContent = 'Событие ' + (i + 1);
+    });
+    plList.querySelectorAll('.pl-remove').forEach((btn) => {
+      btn.disabled = plList.children.length <= 2;
+      btn.classList.toggle('opacity-40', btn.disabled);
+      btn.classList.toggle('cursor-not-allowed', btn.disabled);
+    });
+  }
+
+  $('pl-add').addEventListener('click', () => {
+    if (plList.children.length >= 15) return;
+    plList.appendChild(plRow('1.50'));
+    relabelParlay();
+    renderParlay();
+  });
+
+  function renderParlay() {
+    const inputs = Array.from(plList.querySelectorAll('.pl-input'));
+    const odds = inputs.map(parseNum);
+    let valid = true;
+    inputs.forEach((el, i) => {
+      const ok = Number.isFinite(odds[i]) && odds[i] > 1;
+      setInvalid(el, !ok);
+      if (!ok) valid = false;
+    });
+    const stake = parseNum($('pl-stake'));
+    const okS = Number.isFinite(stake) && stake >= 0;
+    setInvalid($('pl-stake'), !okS);
+    if (!valid || !okS) {
+      $('pl-error').textContent = 'Все коэффициенты должны быть больше 1, ставка ≥ 0.';
+      return;
+    }
+    $('pl-error').textContent = '';
+
+    const total = odds.reduce((m, d) => m * d, 1);
+    const prob = 100 / total;
+    $('pl-odds').textContent = fmt(total);
+    $('pl-prob').textContent = pct(prob);
+    $('pl-prob-bar').style.width = clampBar(prob) + '%';
+    $('pl-payout').textContent = rub(stake * total);
+    $('pl-profit').textContent = rub(stake * (total - 1));
+  }
+
+  ['1.85', '2.13'].forEach((v) => plList.appendChild(plRow(v)));
+  relabelParlay();
+  $('pl-stake').addEventListener('input', renderParlay);
+
+  /* ---------- 5. Келли ---------- */
+  function renderKelly() {
+    const d = parseNum($('kl-odds'));
+    const p = parseNum($('kl-prob'));
+    const bank = parseNum($('kl-bank'));
+    const frac = parseFloat($('kl-fraction').value);
+    const okD = Number.isFinite(d) && d > 1;
+    const okP = Number.isFinite(p) && p > 0 && p < 100;
+    const okB = Number.isFinite(bank) && bank >= 0;
+    setInvalid($('kl-odds'), !okD);
+    setInvalid($('kl-prob'), !okP);
+    setInvalid($('kl-bank'), !okB);
+    if (!okD || !okP || !okB) {
+      $('kl-error').textContent = 'Проверьте: коэффициент > 1, вероятность от 0 до 100, банкролл ≥ 0.';
+      return;
+    }
+    $('kl-error').textContent = '';
+
+    const prob = p / 100;
+    const fullKelly = (prob * d - 1) / (d - 1); // доля банка
+    const edge = (prob * d - 1) * 100;
+    const positive = fullKelly > 0;
+    const applied = positive ? fullKelly * frac : 0;
+
+    $('kl-full').textContent = pct(Math.max(fullKelly, 0) * 100);
+    $('kl-percent').textContent = pct(applied * 100);
+    $('kl-stake').textContent = rub(bank * applied, 0);
+    $('kl-edge').textContent = (edge >= 0 ? '+' : '') + pct(edge);
+    $('kl-edge').classList.toggle('text-success', positive);
+    $('kl-edge').classList.toggle('text-danger', !positive);
+
+    const box = $('kl-verdict');
+    box.className = 'rounded-xl border px-4 py-3 mt-2 mb-5 flex items-center gap-3 ' +
+      (positive ? 'border-success/40 bg-success/10' : 'border-danger/40 bg-danger/10');
+    const txt = $('kl-verdict-text');
+    txt.className = 'font-medium ' + (positive ? 'text-success' : 'text-danger');
+    txt.textContent = positive
+      ? 'Ставка имеет положительную ценность — Келли рекомендует ставить.'
+      : 'Отрицательная ценность — по Келли ставить не стоит (рекомендуемая ставка 0 ₽).';
+  }
+  ['kl-odds', 'kl-prob', 'kl-bank'].forEach((id) => $(id).addEventListener('input', renderKelly));
+  $('kl-fraction').addEventListener('change', renderKelly);
+
+  /* ---------- Первичный рендер ---------- */
+  convertFrom('decimal');
+  renderMargin();
+  renderEV();
+  renderParlay();
+  renderKelly();
+  </script>
+
+  <style>
+    /* Классы-композиции (после Tailwind CDN, чтобы переопределять) */
+    .card {
+      background: #26211E;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 20px;
+    }
+    @media (min-width: 640px) { .card { padding: 24px; } }
+    .card-title { font-size: 1rem; font-weight: 600; }
+    .lbl { display: block; font-size: .875rem; font-weight: 500; color: #D6D3D1; margin-bottom: 6px; }
+    .hint { font-size: .75rem; color: #A8A29E; margin-top: 6px; }
+    .stat { background: rgba(44,36,32,.6); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px 16px; }
+    .tab-btn {
+      flex: 1 0 auto; min-height: 44px; padding: 0 16px;
+      border-radius: 9px; font-size: .9rem; font-weight: 500;
+      color: #A8A29E; white-space: nowrap; cursor: pointer;
+    }
+    .tab-btn:hover { color: #FAFAF9; }
+    .tab-btn[aria-selected="true"] { background: #EA580C; color: #fff; }
+    .tab-btn:focus-visible, .btn-secondary:focus-visible, .btn-icon:focus-visible {
+      outline: 2px solid #F97316; outline-offset: 2px;
+    }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      min-height: 44px; padding: 0 16px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.14); color: #FAFAF9;
+      font-size: .875rem; font-weight: 500; cursor: pointer;
+      transition: background-color .2s ease, border-color .2s ease;
+    }
+    .btn-secondary:hover { background: #2C2420; border-color: rgba(255,255,255,0.25); }
+    .btn-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 48px; height: 48px; border-radius: 10px; flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.14); color: #A8A29E; cursor: pointer;
+      transition: color .2s ease, border-color .2s ease, background-color .2s ease;
+    }
+    .btn-icon:hover:not(:disabled) { color: #EF4444; border-color: rgba(239,68,68,.4); background: rgba(239,68,68,.08); }
+  </style>
+</body>
+</html>
