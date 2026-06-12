@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Анна Соколова — клинический психолог · Консультации онлайн и в Москве</title>
+  <meta name="description" content="Анна Соколова — клинический психолог, психотерапевт. Помощь при тревоге, выгорании, кризисах и трудностях в отношениях. Консультации онлайн и очно." />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Анна Соколова — клинический психолог" />
+  <meta property="og:description" content="Бережная психологическая помощь: тревога, выгорание, отношения, самооценка. Онлайн и очно." />
+  <meta property="og:type" content="website" />
+
+  <!-- Fonts: Lora (заголовки) + Raleway (текст) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['Lora', 'Georgia', 'serif'],
+            body: ['Raleway', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            // Мягкий голубой — спокойствие, доверие
+            brand: {
+              50:  '#f1f6fc',
+              100: '#e2edf8',
+              200: '#c6dbf0',
+              300: '#9cc0e3',
+              400: '#6c9ed1',
+              500: '#4c7fbf', // основной
+              600: '#3b649e', // активный / hover
+              700: '#324f7e',
+              800: '#2d4368',
+              900: '#293a57',
+            },
+            // Тёплый серый — нейтральная база
+            sand: {
+              50:  '#faf9f7',
+              100: '#f4f2ee',
+              200: '#e9e5de',
+              300: '#d8d2c7',
+              400: '#b3ac9e',
+              500: '#8c8576',
+              600: '#6b6558',
+              700: '#524d43',
+              800: '#3a362f',
+              900: '#26231e',
+            },
+          },
+          boxShadow: {
+            soft: '0 1px 2px rgba(41,58,87,.04), 0 8px 24px rgba(41,58,87,.06)',
+            'soft-lg': '0 2px 4px rgba(41,58,87,.05), 0 18px 48px rgba(41,58,87,.10)',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    body { font-family: 'Raleway', system-ui, sans-serif; }
+    h1,h2,h3,h4 { font-family: 'Lora', Georgia, serif; }
+
+    /* Плавное появление секций при скролле */
+    .reveal { opacity: 0; transform: translateY(16px); transition: opacity .6s ease-out, transform .6s ease-out; }
+    .reveal.is-visible { opacity: 1; transform: none; }
+
+    /* Аккордеон FAQ */
+    .faq-answer { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s ease; }
+    .faq-item[open] .faq-answer { grid-template-rows: 1fr; }
+    .faq-answer > div { overflow: hidden; }
+    details > summary { list-style: none; }
+    details > summary::-webkit-details-marker { display: none; }
+    .faq-item[open] .faq-chevron { transform: rotate(180deg); }
+
+    /* Уважение к prefers-reduced-motion */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .faq-answer { transition: none; }
+      * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+    }
+  </style>
+</head>
+
+<body class="bg-sand-50 text-sand-800 antialiased selection:bg-brand-100 selection:text-brand-800">
+
+  <!-- Skip link для клавиатуры -->
+  <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-brand-600 focus:px-4 focus:py-2 focus:text-white">
+    Перейти к содержимому
+  </a>
+
+  <!-- ============ ШАПКА ============ -->
+  <header class="sticky top-0 z-40 border-b border-sand-200/70 bg-sand-50/80 backdrop-blur-md">
+    <nav class="mx-auto flex h-16 max-w-6xl items-center justify-between px-5" aria-label="Основная навигация">
+      <a href="#" class="flex items-center gap-2.5 font-heading text-lg font-600 text-brand-700">
+        <span class="grid h-9 w-9 place-items-center rounded-full bg-brand-100 text-brand-600" aria-hidden="true">
+          <!-- Lucide: leaf -->
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+        </span>
+        Анна Соколова
+      </a>
+
+      <div class="hidden items-center gap-7 text-sm font-500 text-sand-600 md:flex">
+        <a href="#about" class="transition-colors hover:text-brand-600">Обо мне</a>
+        <a href="#services" class="transition-colors hover:text-brand-600">С чем работаю</a>
+        <a href="#approach" class="transition-colors hover:text-brand-600">Подход</a>
+        <a href="#pricing" class="transition-colors hover:text-brand-600">Формат и цена</a>
+        <a href="#faq" class="transition-colors hover:text-brand-600">Вопросы</a>
+      </div>
+
+      <a href="#contact"
+         class="inline-flex cursor-pointer items-center rounded-full bg-brand-600 px-5 py-2.5 text-sm font-600 text-white shadow-soft transition-all duration-200 hover:bg-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-sand-50">
+        Записаться
+      </a>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <!-- ============ HERO ============ -->
+    <section class="relative overflow-hidden">
+      <div aria-hidden="true" class="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-brand-100/60 blur-3xl"></div>
+      <div aria-hidden="true" class="pointer-events-none absolute -bottom-32 -left-24 h-96 w-96 rounded-full bg-sand-200/60 blur-3xl"></div>
+
+      <div class="relative mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 md:grid-cols-2 md:py-24">
+        <div class="reveal">
+          <span class="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3.5 py-1.5 text-xs font-600 uppercase tracking-wide text-brand-600">
+            <span class="h-2 w-2 rounded-full bg-brand-500" aria-hidden="true"></span>
+            Принимаю новых клиентов
+          </span>
+
+          <h1 class="mt-5 font-heading text-4xl font-600 leading-tight text-sand-900 sm:text-5xl">
+            Пространство, где можно <span class="text-brand-600">выдохнуть</span> и разобраться в себе
+          </h1>
+
+          <p class="mt-5 max-w-md text-lg leading-relaxed text-sand-600">
+            Я — Анна Соколова, клинический психолог и психотерапевт. Бережно помогаю справляться с тревогой,
+            выгоранием и трудностями в отношениях — в темпе, комфортном именно для вас.
+          </p>
+
+          <div class="mt-8 flex flex-wrap items-center gap-4">
+            <a href="#contact"
+               class="inline-flex cursor-pointer items-center gap-2 rounded-full bg-brand-600 px-7 py-3.5 text-base font-600 text-white shadow-soft transition-all duration-200 hover:bg-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-sand-50">
+              Записаться на консультацию
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <a href="#about"
+               class="inline-flex cursor-pointer items-center rounded-full border border-sand-300 bg-white px-7 py-3.5 text-base font-600 text-sand-700 transition-colors duration-200 hover:border-brand-300 hover:text-brand-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-sand-50">
+              Узнать обо мне
+            </a>
+          </div>
+
+          <dl class="mt-10 grid max-w-md grid-cols-3 gap-6 border-t border-sand-200 pt-7">
+            <div>
+              <dt class="font-heading text-2xl font-600 text-brand-600">9 лет</dt>
+              <dd class="mt-1 text-sm text-sand-500">в практике</dd>
+            </div>
+            <div>
+              <dt class="font-heading text-2xl font-600 text-brand-600">1500+</dt>
+              <dd class="mt-1 text-sm text-sand-500">консультаций</dd>
+            </div>
+            <div>
+              <dt class="font-heading text-2xl font-600 text-brand-600">КПТ</dt>
+              <dd class="mt-1 text-sm text-sand-500">научный метод</dd>
+            </div>
+          </dl>
+        </div>
+
+        <!-- Фото -->
+        <div class="reveal relative mx-auto w-full max-w-sm md:max-w-md">
+          <div class="absolute inset-0 -rotate-3 rounded-[2rem] bg-brand-100" aria-hidden="true"></div>
+          <img
+            src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=800&q=80"
+            alt="Портрет психолога Анны Соколовой"
+            width="800" height="1000" loading="eager"
+            class="relative aspect-[4/5] w-full rounded-[2rem] object-cover shadow-soft-lg" />
+          <div class="absolute -bottom-5 -left-5 flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-soft">
+            <span class="grid h-10 w-10 place-items-center rounded-full bg-brand-50 text-brand-600" aria-hidden="true">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+            </span>
+            <div class="text-sm">
+              <p class="font-600 text-sand-800">Конфиденциально</p>
+              <p class="text-sand-500">безоценочно и безопасно</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ОБО МНЕ ============ -->
+    <section id="about" class="mx-auto max-w-6xl scroll-mt-20 px-5 py-16 md:py-24">
+      <div class="grid items-start gap-12 md:grid-cols-[1fr_1.3fr]">
+        <div class="reveal">
+          <p class="text-sm font-600 uppercase tracking-wide text-brand-600">Обо мне</p>
+          <h2 class="mt-3 font-heading text-3xl font-600 text-sand-900 sm:text-4xl">Рядом, чтобы вам стало легче</h2>
+        </div>
+        <div class="reveal space-y-4 text-lg leading-relaxed text-sand-600">
+          <p>
+            Уже более 9 лет я помогаю людям находить опору внутри себя. Ко мне приходят, когда тревога мешает
+            спать, работа перестала радовать, а отношения превратились в источник боли.
+          </p>
+          <p>
+            В работе я опираюсь на доказательные методы — прежде всего когнитивно-поведенческую терапию (КПТ)
+            и схема-терапию. Это значит, что мы не просто разговариваем: вместе находим конкретные шаги,
+            которые меняют качество жизни.
+          </p>
+          <ul class="mt-6 space-y-3">
+            <li class="flex items-start gap-3">
+              <svg class="mt-1 h-5 w-5 shrink-0 text-brand-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+              <span>МГУ им. Ломоносова, факультет психологии. Клиническая психология.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="mt-1 h-5 w-5 shrink-0 text-brand-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+              <span>Сертификация по КПТ и схема-терапии, 600+ часов супервизий.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="mt-1 h-5 w-5 shrink-0 text-brand-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+              <span>Член Ассоциации когнитивно-поведенческой психотерапии.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ С ЧЕМ РАБОТАЮ ============ -->
+    <section id="services" class="scroll-mt-20 bg-white py-16 md:py-24">
+      <div class="mx-auto max-w-6xl px-5">
+        <div class="reveal mx-auto max-w-2xl text-center">
+          <p class="text-sm font-600 uppercase tracking-wide text-brand-600">С чем работаю</p>
+          <h2 class="mt-3 font-heading text-3xl font-600 text-sand-900 sm:text-4xl">Запросы, с которыми ко мне приходят</h2>
+          <p class="mt-4 text-lg text-sand-600">Если узнаёте себя хотя бы в одном пункте — это уже достаточный повод обратиться.</p>
+        </div>
+
+        <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <!-- карточка -->
+          <article class="reveal group rounded-2xl border border-sand-200 bg-sand-50 p-6 transition-all duration-200 hover:-translate-y-1 hover:border-brand-200 hover:shadow-soft">
+            <span class="grid h-12 w-12 place-items-center rounded-xl bg-brand-100 text-brand-600" aria-hidden="true">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-7 7c0 2.4 1.2 4 2.5 5.5L9 16v3a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-3l1.5-1.5C17.8 13 19 11.4 19 9a7 7 0 0 0-7-7Z"/></svg>
+            </span>
+            <h3 class="mt-5 font-heading text-xl font-600 text-sand-900">Тревога и паника</h3>
+            <p class="mt-2 leading-relaxed text-sand-600">Навязчивые мысли, постоянное напряжение, панические атаки и «что если…».</p>
+          </article>
+
+          <article class="reveal group rounded-2xl border border-sand-200 bg-sand-50 p-6 transition-all duration-200 hover:-translate-y-1 hover:border-brand-200 hover:shadow-soft">
+            <span class="grid h-12 w-12 place-items-center rounded-xl bg-brand-100 text-brand-600" aria-hidden="true">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
+            </span>
+            <h3 class="mt-5 font-heading text-xl font-600 text-sand-900">Выгорание и усталость</h3>
+            <p class="mt-2 leading-relaxed text-sand-600">Нет сил и мотивации, работа истощает, потеря интереса к тому, что раньше радовало.</p>
+          </article>
+
+          <article class="reveal group rounded-2xl border border-sand-200 bg-sand-50 p-6 transition-all duration-200 hover:-translate-y-1 hover:border-brand-200 hover:shadow-soft">
+            <span class="grid h-12 w-12 place-items-center rounded-xl bg-brand-100 text-brand-600" aria-hidden="true">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/></svg>
+            </span>
+            <h3 class="mt-5 font-heading text-xl font-600 text-sand-900">Отношения</h3>
+            <p class="mt-2 leading-relaxed text-sand-600">Конфликты, ревность, созависимость, сложности с близостью и доверием.</p>
+          </article>
+
+          <article class="reveal group rounded-2xl border border-sand-200 bg-sand-50 p-6 transition-all duration-200 hover:-translate-y-1 hover:border-brand-200 hover:shadow-soft">
+            <span class="grid h-12 w-12 place-items-center rounded-xl bg-brand-100 text-brand-600" aria-hidden="true">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M3 21a9 9 0 0 1 18 0"/></svg>
+            </span>
+            <h3 class="mt-5 font-heading text-xl font-600 text-sand-900">Самооценка</h3>
+            <p class="mt-2 leading-relaxed text-sand-600">Самокритика, синдром самозванца, сложно принимать себя и свои решения.</p>
+          </article>
+
+          <article class="reveal group rounded-2xl border border-sand-200 bg-sand-50 p-6 transition-all duration-200 hover:-translate-y-1 hover:border-brand-200 hover:shadow-soft">
+            <span class="grid h-12 w-12 place-items-center rounded-xl bg-brand-100 text-brand-600" aria-hidden="true">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg>
+            </span>
+            <h3 class="mt-5 font-heading text-xl font-600 text-sand-900">Кризисы и потери</h3>
+            <p class="mt-2 leading-relaxed text-sand-600">Расставание, утрата, перемены в жизни, ощущение, что «всё рушится».</p>
+          </article>
+
+          <article class="reveal group rounded-2xl border border-sand-200 bg-sand-50 p-6 transition-all duration-200 hover:-translate-y-1 hover:border-brand-200 hover:shadow-soft">
+            <span class="grid h-12 w-12 place-items-center rounded-xl bg-brand-100 text-brand-600" aria-hidden="true">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            </span>
+            <h3 class="mt-5 font-heading text-xl font-600 text-sand-900">Поиск себя</h3>
+            <p class="mt-2 leading-relaxed text-sand-600">Непонимание своих желаний, прокрастинация, «живу не своей жизнью».</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ПОДХОД ============ -->
+    <section id="approach" class="mx-auto max-w-6xl scroll-mt-20 px-5 py-16 md:py-24">
+      <div class="reveal mx-auto max-w-2xl text-center">
+        <p class="text-sm font-600 uppercase tracking-wide text-brand-600">Как проходит работа</p>
+        <h2 class="mt-3 font-heading text-3xl font-600 text-sand-900 sm:text-4xl">Понятный и бережный путь</h2>
+        <p class="mt-4 text-lg text-sand-600">Без осуждения и «правильных ответов». Мы движемся в вашем темпе.</p>
+      </div>
+
+      <ol class="mt-12 grid gap-8 md:grid-cols-3">
+        <li class="reveal relative rounded-2xl border border-sand-200 bg-white p-7 shadow-soft">
+          <span class="font-heading text-5xl font-600 text-brand-100">01</span>
+          <h3 class="mt-2 font-heading text-xl font-600 text-sand-900">Знакомство</h3>
+          <p class="mt-2 leading-relaxed text-sand-600">Первая встреча — чтобы познакомиться, обсудить запрос и понять, комфортно ли вам со мной.</p>
+        </li>
+        <li class="reveal relative rounded-2xl border border-sand-200 bg-white p-7 shadow-soft">
+          <span class="font-heading text-5xl font-600 text-brand-100">02</span>
+          <h3 class="mt-2 font-heading text-xl font-600 text-sand-900">Работа</h3>
+          <p class="mt-2 leading-relaxed text-sand-600">Регулярные сессии раз в неделю. Конкретные техники и поддержка между встречами.</p>
+        </li>
+        <li class="reveal relative rounded-2xl border border-sand-200 bg-white p-7 shadow-soft">
+          <span class="font-heading text-5xl font-600 text-brand-100">03</span>
+          <h3 class="mt-2 font-heading text-xl font-600 text-sand-900">Устойчивость</h3>
+          <p class="mt-2 leading-relaxed text-sand-600">Вы уходите с навыками, которые остаются с вами и работают без терапевта.</p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ============ ФОРМАТ И ЦЕНА ============ -->
+    <section id="pricing" class="scroll-mt-20 bg-white py-16 md:py-24">
+      <div class="mx-auto max-w-5xl px-5">
+        <div class="reveal mx-auto max-w-2xl text-center">
+          <p class="text-sm font-600 uppercase tracking-wide text-brand-600">Формат и стоимость</p>
+          <h2 class="mt-3 font-heading text-3xl font-600 text-sand-900 sm:text-4xl">Прозрачные условия</h2>
+        </div>
+
+        <div class="mt-12 grid gap-6 md:grid-cols-2">
+          <div class="reveal rounded-2xl border border-sand-200 bg-sand-50 p-8">
+            <div class="flex items-center gap-3">
+              <span class="grid h-11 w-11 place-items-center rounded-xl bg-brand-100 text-brand-600" aria-hidden="true">
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M2 10h20M7 18v3M17 18v3"/></svg>
+              </span>
+              <h3 class="font-heading text-xl font-600 text-sand-900">Онлайн</h3>
+            </div>
+            <p class="mt-4 font-heading text-3xl font-600 text-sand-900">4 500 ₽ <span class="text-base font-400 text-sand-500">/ 50 минут</span></p>
+            <ul class="mt-5 space-y-2.5 text-sand-600">
+              <li class="flex items-center gap-2.5"><svg class="h-4 w-4 text-brand-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Zoom или Google Meet</li>
+              <li class="flex items-center gap-2.5"><svg class="h-4 w-4 text-brand-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Из любой точки мира</li>
+              <li class="flex items-center gap-2.5"><svg class="h-4 w-4 text-brand-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Удобное вечернее время</li>
+            </ul>
+          </div>
+
+          <div class="reveal rounded-2xl border-2 border-brand-300 bg-brand-50 p-8 shadow-soft">
+            <div class="flex items-center gap-3">
+              <span class="grid h-11 w-11 place-items-center rounded-xl bg-brand-600 text-white" aria-hidden="true">
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
+              </span>
+              <h3 class="font-heading text-xl font-600 text-sand-900">Очно · Москва</h3>
+            </div>
+            <p class="mt-4 font-heading text-3xl font-600 text-sand-900">6 000 ₽ <span class="text-base font-400 text-sand-500">/ 50 минут</span></p>
+            <ul class="mt-5 space-y-2.5 text-sand-600">
+              <li class="flex items-center gap-2.5"><svg class="h-4 w-4 text-brand-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Уютный кабинет в центре</li>
+              <li class="flex items-center gap-2.5"><svg class="h-4 w-4 text-brand-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> 5 минут от метро</li>
+              <li class="flex items-center gap-2.5"><svg class="h-4 w-4 text-brand-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Первая встреча — 50%</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ОТЗЫВЫ ============ -->
+    <section class="mx-auto max-w-6xl px-5 py-16 md:py-24">
+      <div class="reveal mx-auto max-w-2xl text-center">
+        <p class="text-sm font-600 uppercase tracking-wide text-brand-600">Отзывы</p>
+        <h2 class="mt-3 font-heading text-3xl font-600 text-sand-900 sm:text-4xl">Что говорят клиенты</h2>
+      </div>
+
+      <div class="mt-12 grid gap-6 md:grid-cols-3">
+        <figure class="reveal rounded-2xl border border-sand-200 bg-white p-7 shadow-soft">
+          <div class="flex gap-0.5 text-brand-500" aria-label="Оценка 5 из 5">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01Z"/></svg>
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01Z"/></svg>
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01Z"/></svg>
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01Z"/></svg>
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01Z"/></svg>
+          </div>
+          <blockquote class="mt-4 leading-relaxed text-sand-700">«Впервые за долгое время перестала просыпаться с тревогой. Анна не давит и не учит жить — рядом с ней спокойно.»</blockquote>
+          <figcaption class="mt-5 text-sm"><span class="font-600 text-sand-900">Мария</span> <span class="text-sand-500">· 31 год</span></figcaption>
+        </figure>
+
+        <figure class="reveal rounded-2xl border border-sand-200 bg-white p-7 shadow-soft">
+          <div class="flex gap-0.5 text-brand-500" aria-label="Оценка 5 из 5">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01Z"/></svg>
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01Z"/></svg>
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01Z"/></svg>
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01Z"/></svg>
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01Z"/></svg>
+          </div>
+          <blockquote class="mt-4 leading-relaxed text-sand-700">«Думал, психология — это не про меня. Оказалось, за 3 месяца разобрался с тем, что мучило годами. Спасибо.»</blockquote>
+          <figcaption class="mt-5 text-sm"><span class="font-600 text-sand-900">Дмитрий</span> <span class="text-sand-500">· 38 лет</span></figcaption>
+        </figure>
+
+        <figure class="reveal rounded-2xl border border-sand-200 bg-white p-7 shadow-soft">
+          <div class="flex gap-0.5 text-brand-500" aria-label="Оценка 5 из 5">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01Z"/></svg>
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01Z"/></svg>
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01Z"/></svg>
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01Z"/></svg>
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01Z"/></svg>
+          </div>
+          <blockquote class="mt-4 leading-relaxed text-sand-700">«Очень структурно и по делу. Получаю не только поддержку, но и инструменты, которыми реально пользуюсь.»</blockquote>
+          <figcaption class="mt-5 text-sm"><span class="font-600 text-sand-900">Ольга</span> <span class="text-sand-500">· 27 лет</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section id="faq" class="scroll-mt-20 bg-white py-16 md:py-24">
+      <div class="mx-auto max-w-3xl px-5">
+        <div class="reveal text-center">
+          <p class="text-sm font-600 uppercase tracking-wide text-brand-600">Частые вопросы</p>
+          <h2 class="mt-3 font-heading text-3xl font-600 text-sand-900 sm:text-4xl">Возможно, вы хотели спросить</h2>
+        </div>
+
+        <div class="reveal mt-10 space-y-3">
+          <details class="faq-item rounded-2xl border border-sand-200 bg-sand-50">
+            <summary class="flex cursor-pointer items-center justify-between gap-4 px-6 py-5 font-600 text-sand-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-sand-50">
+              С чего начинается работа?
+              <svg class="faq-chevron h-5 w-5 shrink-0 text-brand-500 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <div class="faq-answer"><div class="px-6 pb-5 leading-relaxed text-sand-600">С первой ознакомительной встречи. Мы знакомимся, вы рассказываете, что привело, а я объясняю, как может строиться работа. Никаких обязательств продолжать — это нормально.</div></div>
+          </details>
+
+          <details class="faq-item rounded-2xl border border-sand-200 bg-sand-50">
+            <summary class="flex cursor-pointer items-center justify-between gap-4 px-6 py-5 font-600 text-sand-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-sand-50">
+              Сколько нужно сессий?
+              <svg class="faq-chevron h-5 w-5 shrink-0 text-brand-500 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <div class="faq-answer"><div class="px-6 pb-5 leading-relaxed text-sand-600">Зависит от запроса. С конкретными ситуациями иногда хватает 8–12 встреч, более глубокая работа занимает дольше. Мы регулярно сверяемся, насколько вам становится легче.</div></div>
+          </details>
+
+          <details class="faq-item rounded-2xl border border-sand-200 bg-sand-50">
+            <summary class="flex cursor-pointer items-center justify-between gap-4 px-6 py-5 font-600 text-sand-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-sand-50">
+              Это конфиденциально?
+              <svg class="faq-chevron h-5 w-5 shrink-0 text-brand-500 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <div class="faq-answer"><div class="px-6 pb-5 leading-relaxed text-sand-600">Да. Всё, что происходит на сессии, остаётся между нами. Это профессиональный и этический стандарт работы психолога.</div></div>
+          </details>
+
+          <details class="faq-item rounded-2xl border border-sand-200 bg-sand-50">
+            <summary class="flex cursor-pointer items-center justify-between gap-4 px-6 py-5 font-600 text-sand-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-sand-50">
+              Чем психолог отличается от психиатра?
+              <svg class="faq-chevron h-5 w-5 shrink-0 text-brand-500 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <div class="faq-answer"><div class="px-6 pb-5 leading-relaxed text-sand-600">Психолог работает методами разговорной терапии и не назначает лекарства. Если в процессе мы поймём, что нужна медикаментозная поддержка, я порекомендую проверенного психиатра.</div></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ КОНТАКТ / CTA ============ -->
+    <section id="contact" class="scroll-mt-20 px-5 py-16 md:py-24">
+      <div class="mx-auto max-w-5xl overflow-hidden rounded-3xl bg-brand-600 shadow-soft-lg">
+        <div class="grid gap-10 p-8 md:grid-cols-2 md:p-12">
+          <div class="reveal text-white">
+            <h2 class="font-heading text-3xl font-600 sm:text-4xl">Сделайте первый шаг</h2>
+            <p class="mt-4 max-w-md text-lg leading-relaxed text-brand-100">
+              Оставьте контакты — я свяжусь с вами в течение дня, отвечу на вопросы и подберём удобное время.
+              Это ни к чему не обязывает.
+            </p>
+            <div class="mt-8 space-y-3 text-brand-50">
+              <a href="https://t.me/" class="flex items-center gap-3 transition-colors hover:text-white focus:outline-none focus-visible:underline">
+                <span class="grid h-10 w-10 place-items-center rounded-full bg-white/10" aria-hidden="true">
+                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                </span>
+                Telegram: @anna_psy
+              </a>
+              <a href="tel:+70000000000" class="flex items-center gap-3 transition-colors hover:text-white focus:outline-none focus-visible:underline">
+                <span class="grid h-10 w-10 place-items-center rounded-full bg-white/10" aria-hidden="true">
+                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>
+                </span>
+                +7 (900) 000-00-00
+              </a>
+            </div>
+          </div>
+
+          <!-- Форма заявки -->
+          <form class="reveal space-y-4 rounded-2xl bg-white p-6 shadow-soft" novalidate>
+            <div>
+              <label for="name" class="mb-1.5 block text-sm font-600 text-sand-700">Как к вам обращаться <span class="text-brand-600">*</span></label>
+              <input id="name" name="name" type="text" required autocomplete="name"
+                     class="w-full rounded-xl border border-sand-300 bg-sand-50 px-4 py-3 text-sand-900 placeholder-sand-400 transition-colors focus:border-brand-400 focus:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                     placeholder="Ваше имя" />
+            </div>
+            <div>
+              <label for="contact-field" class="mb-1.5 block text-sm font-600 text-sand-700">Телефон или Telegram <span class="text-brand-600">*</span></label>
+              <input id="contact-field" name="contact" type="text" required autocomplete="tel"
+                     class="w-full rounded-xl border border-sand-300 bg-sand-50 px-4 py-3 text-sand-900 placeholder-sand-400 transition-colors focus:border-brand-400 focus:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                     placeholder="+7… или @username" />
+            </div>
+            <div>
+              <label for="message" class="mb-1.5 block text-sm font-600 text-sand-700">Пара слов о запросе</label>
+              <textarea id="message" name="message" rows="3"
+                        class="w-full resize-none rounded-xl border border-sand-300 bg-sand-50 px-4 py-3 text-sand-900 placeholder-sand-400 transition-colors focus:border-brand-400 focus:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                        placeholder="Необязательно — но так я лучше подготовлюсь"></textarea>
+            </div>
+            <button type="submit"
+                    class="w-full cursor-pointer rounded-xl bg-brand-600 px-6 py-3.5 font-600 text-white transition-colors duration-200 hover:bg-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">
+              Отправить заявку
+            </button>
+            <p id="form-status" role="status" aria-live="polite" class="hidden text-center text-sm font-500 text-brand-700"></p>
+            <p class="text-center text-xs text-sand-400">Нажимая кнопку, вы соглашаетесь с обработкой персональных данных.</p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ ПОДВАЛ ============ -->
+  <footer class="border-t border-sand-200 bg-sand-50">
+    <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 py-8 text-sm text-sand-500 sm:flex-row">
+      <p class="flex items-center gap-2 font-heading text-base font-600 text-brand-700">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+        Анна Соколова
+      </p>
+      <p>© 2026 · Клинический психолог · Москва</p>
+      <p>Сайт носит информационный характер</p>
+    </div>
+  </footer>
+
+  <script>
+    // Плавное появление секций при скролле (с уважением к reduced-motion)
+    (function () {
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var items = document.querySelectorAll('.reveal');
+      if (reduce || !('IntersectionObserver' in window)) {
+        items.forEach(function (el) { el.classList.add('is-visible'); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      items.forEach(function (el) { io.observe(el); });
+    })();
+
+    // Демонстрационная отправка формы (без бэкенда)
+    (function () {
+      var form = document.querySelector('#contact form');
+      var status = document.getElementById('form-status');
+      if (!form) return;
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var name = form.querySelector('#name');
+        var contact = form.querySelector('#contact-field');
+        if (!name.value.trim() || !contact.value.trim()) {
+          status.textContent = 'Пожалуйста, заполните имя и контакт.';
+          status.classList.remove('hidden', 'text-brand-700');
+          status.classList.add('text-red-600');
+          (!name.value.trim() ? name : contact).focus();
+          return;
+        }
+        status.textContent = 'Спасибо! Я свяжусь с вами в течение дня.';
+        status.classList.remove('hidden', 'text-red-600');
+        status.classList.add('text-brand-700');
+        form.reset();
+      });
+    })();
+  </script>
+</body>
+</html>
